@@ -1,0 +1,126 @@
+1.1 Ensure Latest SQL Server Cumalitive and Security Updates are installed
+Audit: Run 1.1 Script
+Remediation:
+Compare versions of your SQL server instance and ensure they contain the latest security fixes.
+Patches can be found here:
+https://learn.microsoft.com/en-us/troubleshoot/sql/releases/download-and-install-latest-updates
+
+1.2 Ensure Single-Function Mmeber Servers are used
+Audit:
+Ensure that no other roles are enable for the underlying operating system and that no excess
+tooling is installed, per enterprise policy.
+Remediation:
+Uninstall exccess tooling and/or remove unnecessary roles from the underlying operating system
+
+2.10 Ensure Unnecessary SQL Server Protocols are set to 'Disabled'
+Audit:
+Open SQL Server Configuration Manager, go to SQL Server Network Configuration. Ensure that
+only required protocols are enabled. Disable protocols not necessary
+
+2.11 Ensure SQL Server is configured to use non-standard ports
+Audit: Run 2.11 script
+Remediation:
+1. In SQL Server Configuration Manager, expand SQL Server Network Configuration,
+	expand protocols for <InstanceName>. E.g. localhost/sqlexpress, and then doublic-click the TCP/IP protocol.
+2. In the TCP/IP Properties dialog box, on the IP Addresses tab. One of the ip addresses is for
+	the loopback adapter, 127.0.0.1.
+3. Under IPAll, change the TCP Port field from 1433 to a non-standard prot or leave the TCP Port
+	field empty and set the TCP Dynamic Ports value to 0 to enable dynamic port assignment and then click OK
+4. In the console pane click SQL Server Services
+5. Right click SQL Server <instance name> and then click restart to stop and restart sql server.
+
+3.4 Ensure SQL Authentication is not used in contained databases
+Audit: Run 3.4 script
+Remediation: Levarage Windows Authenticated users in contained databases.
+
+3.5 Ensure the SQL Server’s MSSQL Service Account is Not an Administrator 
+Audit: 
+Verify that the service account (in case of a local or AD account) and service SID
+are not members of the Windows Administrators group. 
+Remediation:
+In the case where LocalSystem is used, use SQL Server Configuration Manager to change
+to a less privileged account. Otherwise, remove the account or service SID from the
+Administrators group. You may need to run the SQL Server Configuration Manager if
+underlying permissions had been changed or if SQL Server Configuration Manager was
+not originally used to set the service account. 
+
+3.6 Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator (Manual) 
+Audit: 
+Verify that the service account (in case of a local or AD account) and service SID are not members
+of the Windows Administrators group. 
+Remediation: 
+In the case where LocalSystem is used, use SQL Server Configuration Manager to change to a less
+privileged account. Otherwise, remove the account or service SID from the Administrators group.
+You may need to run the SQL Server Configuration Manager if underlying permissions had been changed or
+if SQL Server Configuration Manager was not originally used to set the service account. 
+
+3.7 Ensure the SQL Server’s Full-Text Service Account is Not an Administrator (Manual) 
+Audit: 
+Verify that the service account (in case of a local or AD account) and service SID are not members of the
+Windows Administrators group. 
+Remediation: 
+In the case where LocalSystem is used, use SQL Server Configuration Manager to change to a less
+privileged account. Otherwise, remove the account or service SID from the Administrators group.
+You may need to run the SQL Server Configuration Manager if underlying permissions had been changed or
+if SQL Server Configuration Manager was not originally used to set the service account. 
+
+4.1 Ensure 'MUST_CHANGE' Option is set to 'ON' for All SQL Authenticated Logins
+Audit: 
+1. Open SQL Server Management Studio
+2. Open Object Explorer and connect the target instance
+3. Navigate to Logins tab in Object Explorer and expand. (Security > Logins). Right click on the desired
+	login and select Properties
+4. Verify the user must change password at next login checkbox is checked
+Remediation: Run 4.1 script
+
+6.1 Ensure Database and Application User Input is Sanitized
+Audit:
+Check with the application teams to ensure any database interaction is through the use of stored
+procedures and not dynamic SQL. Revoke any INSERT, UPDATE, or DELETE privileges to users so that
+modifications to data must be done through stored procedures. Verify that there's no SQL query in
+the application code produced by string concatenation. 
+Remediation: 
+The following steps can be taken to remediate SQL injection vulnerabilities: 
+Review TSQL and application code for SQL Injection 
+Only permit minimally privileged accounts to send user input to the server 
+Minimize the risk of SQL injection attack by using parameterized commands and stored procedures 
+Reject user input containing binary data, escape sequences, and comment characters 
+Always validate user input and do not use it directly to build SQL statements 
+
+7.3 Ensure Database Backups are encrypted
+Audit: Run 7.3 script
+Remediation:
+SQL Server backups need to 'Back up to a new media set', not 'Back up to the existing
+media set' in order to allow for encryption. The backup option to Encrypt Backup can
+be implemented after a Certificate or Asymmetric key has been applied to the SQL Server
+for this purpose. Alternatively, encrypt the database with TDE. This automatically
+encrypts the backups as well. See 7.5 
+
+7.4 Ensure Network Encryption is configured and enabled
+Audit: Run 7.5
+Remediation:
+####UNSURENOTWORKING, but to test this a cert is needed####
+1. Create a SSL certificate using this command: $cert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -DnsName "https://192.168.174.129"
+2. WIN + R, search for certlm. Go to Personal > Certificate. Right click and select All Tasks > Manage Private Keys. Add a user that is running the instance to have read permissions
+3. Export it and place it into any local folder
+3. Within certlm, import the exported certificate to make the SSL certificate trusted.
+4. Open SQL Server 2019 Configuration Manager > Select SQL Server Network Configuration. Right click on the SQL instance,
+	select the properties and click on the certificate tab.
+5. Select the arrow down and choose the created certificate. Head to the flags tab, and set force encryption to yes.
+6. Restart the service and run the audit script once more.
+Refer to Microsoft SQL Server Encryption Document.
+https://learn.microsoft.com/en-us/sql/relational-databases/security/encryption/sql-server-encryption
+
+8.1 Ensure 'SQL Server Browser Service' is configured correctly
+Audit: Check the SQL Browser service's status via services.msc or similar methods
+Remediation: Enable or disable the service as needed for your environment
+
+
+
+
+
+
+
+
+
+
