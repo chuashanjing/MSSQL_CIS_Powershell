@@ -1,4 +1,4 @@
-# Microsoft SQL Server Security Hardening using Powershell
+### Microsoft SQL Server Security Hardening using Powershell
 
 Some of the scripts may not work since they are not explicitly checked due to the absence of license or permissions required to test
 But more of the scripts should work. 
